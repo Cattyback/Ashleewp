@@ -4,5 +4,6 @@ import tailwindcss from '@tailwindcss/vite';
 
 // Vite + React fast-refresh + Tailwind v4 plugin.
 export default defineConfig({
+  base: '/Ashleewp/',
   plugins: [react(), tailwindcss()],
 });
