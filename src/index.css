@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — exposed as Tailwind utilities (`bg-ink`, `text-teal`, ...).
+ * Palette: cool blue-greys anchored with warm terracotta. Light, technical, calm.
+ */
+@theme {
+  /* Surfaces */
+  --color-paper: #d8dbdf;   /* page background */
+  --color-surface: #ffffff; /* cards, modals */
+
+  /* Ink (text + dark surfaces) */
+  --color-ink: #2f2e2a;     /* primary text — warm near-black */
+  --color-line: #54616a;    /* secondary text, hairlines */
+  --color-steel: #485a65;   /* deep slate, dark surface */
+
+  /* Brand */
+  --color-teal: #355355;    /* primary accent */
+  --color-mist: #63869a;    /* info / link accent */
+
+  /* Warm tones (used as swatches + soft highlights) */
+  --color-clay: #a37561;    /* terracotta — CTA / warm highlight */
+  --color-rose: #d4b3b2;    /* dusty pink */
+  --color-stone: #9e8c84;   /* taupe */
+  --color-sand: #a99a8b;    /* warm grey */
+
+  /* Backward-compat aliases — keep `text-night`, `bg-accent`, etc. working */
+  --color-night: #2f2e2a;
+  --color-night-soft: #d8dbdf;
+  --color-accent: #355355;
+  --color-accent-soft: #485a65;
+  --color-muted: #54616a;
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle grid texture on the page background — tech minimal cue.
+   1px dots at 24px spacing, very low opacity so it never competes with content. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(47, 46, 42, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+#root { position: relative; z-index: 1; }
