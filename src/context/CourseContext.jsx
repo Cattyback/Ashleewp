@@ -352,6 +352,42 @@ export function CourseProvider({ children }) {
         // Save again so the folderId is also persisted right away — otherwise
         // a refresh would trigger the load-time backfill to create a duplicate.
         saveNow(withFolder);
+
+        // Race-condition guard: the user may have attached files BEFORE the
+        // folder finished creating — those files got stored without shortcutId
+        // (because setCourseFiles skips shortcut creation when folderId is
+        // missing). Now that the folder exists, create the missing shortcuts.
+        const justCreated = withFolder.find((c) => c.id === course.id);
+        const needShortcuts = justCreated?.files.filter((f) => !f.shortcutId) ?? [];
+        needShortcuts.forEach((f) => {
+          createShortcut(accessToken, {
+            name: f.name,
+            targetId: f.id,
+            parentId: id,
+          })
+            .then((shortcutId) => {
+              setCourses((prev) =>
+                prev.map((c) =>
+                  c.id === course.id
+                    ? {
+                        ...c,
+                        files: c.files.map((file) =>
+                          file.id === f.id ? { ...file, shortcutId } : file,
+                        ),
+                      }
+                    : c,
+                ),
+              );
+            })
+            .catch((err) => {
+              if (err instanceof AuthExpiredError) {
+                expireSession();
+                return;
+              }
+              // eslint-disable-next-line no-console
+              console.error('[WorkPuzzle] shortcut backfill failed for', f.name, err);
+            });
+        });
       })
       .catch((err) => {
         if (err instanceof AuthExpiredError) {
