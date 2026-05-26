@@ -1,17 +1,28 @@
 import { useState } from 'react';
 import useDriveFiles from '../hooks/useDriveFiles.js';
 import { useCourses } from '../context/CourseContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import { iconForMime } from '../utils/fileIcons.js';
 import RefreshButton from './RefreshButton.jsx';
+import { SkeletonFileRow } from './Skeleton.jsx';
+import { EmptyFilesIllustration } from './EmptyIllustration.jsx';
 
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
 export default function FileList() {
   const { files, loading, error, refresh, trashFile } = useDriveFiles();
   const { onDriveFileTrashed } = useCourses();
+  const toast = useToast();
   const handleTrash = async (fileId) => {
-    await trashFile(fileId);
-    onDriveFileTrashed(fileId);
+    const target = files.find((f) => f.id === fileId);
+    try {
+      await trashFile(fileId);
+      onDriveFileTrashed(fileId);
+      toast.success(`Moved "${target?.name ?? 'file'}" to Trash`);
+    } catch (err) {
+      toast.error(`Couldn't delete: ${err.message}`);
+      throw err;
+    }
   };
   const [tab, setTab] = useState('documents');
   const [query, setQuery] = useState('');
@@ -34,8 +45,15 @@ export default function FileList() {
     return (
       <section>
         {header}
-        <div className="bg-surface border border-ink/10 rounded-xl p-6 text-line text-sm">
-          Loading your Drive…
+        <div className="bg-surface text-ink rounded-2xl ring-1 ring-ink/8 shadow-soft overflow-hidden">
+          <div className="px-4 py-3 border-b border-ink/10 bg-stone/15">
+            <div className="wp-skeleton h-9 w-full rounded-full" />
+          </div>
+          <ul className="divide-y divide-ink/5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <SkeletonFileRow key={i} />
+            ))}
+          </ul>
         </div>
       </section>
     );
@@ -45,7 +63,7 @@ export default function FileList() {
     return (
       <section>
         {header}
-        <div className="text-sm text-ink bg-clay/10 border border-clay/40 rounded-xl p-4">
+        <div className="text-sm text-ink bg-clay/10 ring-1 ring-clay/40 shadow-soft rounded-2xl p-4">
           Couldn't load Drive files: {error.message}
         </div>
       </section>
@@ -56,8 +74,12 @@ export default function FileList() {
     return (
       <section>
         {header}
-        <div className="bg-surface border border-ink/10 rounded-xl p-6 text-line text-sm">
-          No files found in your Drive.
+        <div className="bg-surface ring-1 ring-ink/8 shadow-soft rounded-2xl px-6 py-10 flex flex-col items-center text-center">
+          <EmptyFilesIllustration />
+          <h3 className="font-semibold text-base text-ink mt-4">Your Drive looks empty</h3>
+          <p className="text-sm text-line mt-1.5 max-w-sm">
+            Add a file to your Google Drive and it'll appear here. Press <kbd className="font-mono text-xs bg-ink/5 px-1.5 py-0.5 rounded ring-1 ring-ink/10">R</kbd> to refresh.
+          </p>
         </div>
       </section>
     );
@@ -85,7 +107,7 @@ export default function FileList() {
   return (
     <section>
       {header}
-      <div className="bg-surface text-ink rounded-xl border border-ink/10 overflow-hidden">
+      <div className="bg-surface text-ink rounded-2xl ring-1 ring-ink/8 shadow-soft overflow-hidden">
         <div className="px-4 py-3 border-b border-ink/10 space-y-2 bg-stone/15">
           <SearchInput value={query} onChange={setQuery} />
           <DateRangeFilter
@@ -191,7 +213,7 @@ function FileRow({ file, onTrash }) {
               : 'Move to Trash'
         }
         aria-label={confirming ? 'Confirm move to Trash' : 'Move to Trash'}
-        className={`mr-2 w-8 h-8 rounded-md flex items-center justify-center text-sm shrink-0 transition opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:cursor-wait disabled:opacity-100 ${
+        className={`mr-2 w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 transition opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:cursor-wait disabled:opacity-100 ${
           confirming
             ? 'bg-clay text-paper opacity-100'
             : 'text-line hover:text-clay hover:bg-clay/10'
@@ -239,14 +261,14 @@ function SearchInput({ value, onChange }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search files…"
         aria-label="Search files"
-        className="w-full pl-9 pr-9 py-2 text-sm bg-paper/60 border border-transparent rounded-md placeholder:text-clay text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
+        className="w-full pl-9 pr-9 py-2 text-sm bg-paper/60 border border-transparent rounded-full placeholder:text-clay text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange('')}
           aria-label="Clear search"
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md text-line hover:text-ink hover:bg-ink/10 flex items-center justify-center"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-line hover:text-ink hover:bg-ink/10 flex items-center justify-center"
         >
           ×
         </button>
@@ -266,7 +288,7 @@ function DateRangeFilter({ from, to, onFromChange, onToChange }) {
         max={to || undefined}
         onChange={(e) => onFromChange(e.target.value)}
         aria-label="Modified from"
-        className="flex-1 min-w-0 px-2 py-1.5 bg-paper/60 border border-transparent rounded-md text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
+        className="flex-1 min-w-0 px-2 py-1.5 bg-paper/60 border border-transparent rounded-lg text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
       />
       <span className="shrink-0 text-line/60">→</span>
       <input
@@ -275,7 +297,7 @@ function DateRangeFilter({ from, to, onFromChange, onToChange }) {
         min={from || undefined}
         onChange={(e) => onToChange(e.target.value)}
         aria-label="Modified to"
-        className="flex-1 min-w-0 px-2 py-1.5 bg-paper/60 border border-transparent rounded-md text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
+        className="flex-1 min-w-0 px-2 py-1.5 bg-paper/60 border border-transparent rounded-lg text-ink focus:outline-none focus:bg-surface focus:border-teal/40"
       />
       {hasValue && (
         <button
@@ -285,7 +307,7 @@ function DateRangeFilter({ from, to, onFromChange, onToChange }) {
             onToChange('');
           }}
           aria-label="Clear date filter"
-          className="shrink-0 w-6 h-6 rounded-md text-line hover:text-ink hover:bg-ink/10 flex items-center justify-center"
+          className="shrink-0 w-6 h-6 rounded-full text-line hover:text-ink hover:bg-ink/10 flex items-center justify-center"
         >
           ×
         </button>
@@ -328,7 +350,7 @@ function TabButton({ active, count, children, onClick }) {
     >
       <span>{children}</span>
       <span
-        className={`text-[10px] px-1.5 py-0.5 rounded-sm font-mono ${
+        className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
           active ? 'bg-teal/10 text-teal' : 'bg-ink/10 text-line'
         }`}
       >

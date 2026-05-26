@@ -32,6 +32,10 @@
   --color-muted: #54616a;
 
   --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Apple-style "bubble" shadows — layered: a tight contact shadow + a soft diffused glow. */
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -8px rgba(47, 46, 42, 0.10);
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.08), 0 24px 48px -12px rgba(47, 46, 42, 0.22);
 }
 
 html,
@@ -60,3 +64,27 @@ body::before {
 }
 
 #root { position: relative; z-index: 1; }
+
+/* Toast slide-in: small drop + fade. Matches Apple-style banner entrances. */
+@keyframes wp-toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+.wp-toast { animation: wp-toast-in 180ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Skeleton shimmer — a slow sweep across a neutral block. */
+@keyframes wp-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.wp-skeleton {
+  background-color: rgba(158, 140, 132, 0.18);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: wp-shimmer 1.6s ease-in-out infinite;
+}

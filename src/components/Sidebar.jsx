@@ -91,7 +91,7 @@ export default function Sidebar() {
       <p className="hidden md:block text-[10px] uppercase tracking-[0.24em] text-clay mb-2 px-1">
         Navigate
       </p>
-      <nav className="flex md:flex-col gap-1 bg-stone/15 rounded-xl p-1.5 border border-stone/40 overflow-x-auto">
+      <nav className="flex md:flex-col gap-1 bg-stone/15 rounded-2xl p-1.5 ring-1 ring-stone/30 shadow-soft overflow-x-auto">
         {NAV.map((item) => {
           const isActive = active === item.id;
           return (
@@ -99,7 +99,7 @@ export default function Sidebar() {
               key={item.id}
               onClick={() => handleClick(item)}
               aria-current={isActive ? 'true' : undefined}
-              className={`flex-1 md:flex-none flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left whitespace-nowrap transition ${
+              className={`flex-1 md:flex-none flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-left whitespace-nowrap transition ${
                 isActive
                   ? 'bg-teal text-paper shadow-sm'
                   : 'text-ink/80 hover:bg-surface/70'

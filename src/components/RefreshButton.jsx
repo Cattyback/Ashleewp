@@ -6,7 +6,7 @@ export default function RefreshButton({ onClick, loading, title = 'Refresh' }) {
       disabled={loading}
       title={title}
       aria-label={title}
-      className="w-8 h-8 rounded-md flex items-center justify-center text-line hover:text-ink hover:bg-ink/5 transition disabled:opacity-50 disabled:cursor-wait"
+      className="w-8 h-8 rounded-full flex items-center justify-center text-line hover:text-ink hover:bg-ink/5 transition disabled:opacity-50 disabled:cursor-wait"
     >
       <svg
         viewBox="0 0 24 24"

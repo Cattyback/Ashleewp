@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useCourses } from '../context/CourseContext.jsx';
+import { useUI } from '../context/UIContext.jsx';
 import { iconForMime } from '../utils/fileIcons.js';
 import AttachFilesModal from './AttachFilesModal.jsx';
 import RefreshButton from './RefreshButton.jsx';
+import { EmptyOrganizeIllustration } from './EmptyIllustration.jsx';
 
 const COLLAPSE_STORAGE_KEY = 'workpuzzle:courseFiles:collapsed';
 
 export default function CourseFiles() {
   const { courses, loading, setCourseFiles, detachFile, refresh } = useCourses();
+  const { openAddCourse } = useUI();
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
@@ -52,8 +55,19 @@ export default function CourseFiles() {
     return (
       <section>
         {header}
-        <div className="bg-surface border border-ink/10 rounded-xl p-6 text-sm text-line">
-          Add a course first — then come back here to attach files to it.
+        <div className="bg-surface ring-1 ring-ink/8 shadow-soft rounded-2xl px-6 py-10 flex flex-col items-center text-center">
+          <EmptyOrganizeIllustration />
+          <h3 className="font-semibold text-base text-ink mt-4">Nothing to organize yet</h3>
+          <p className="text-sm text-line mt-1.5 max-w-sm">
+            Once you add a course, you can pick which files from your Drive belong to it.
+          </p>
+          <button
+            type="button"
+            onClick={openAddCourse}
+            className="mt-5 px-4 py-2 rounded-full bg-ink text-paper text-sm font-medium hover:bg-steel shadow-soft transition"
+          >
+            Add a course
+          </button>
         </div>
       </section>
     );
@@ -65,13 +79,13 @@ export default function CourseFiles() {
   return (
     <section>
       {header}
-      <div className="bg-surface text-ink rounded-xl border border-ink/10 overflow-hidden">
+      <div className="bg-surface text-ink rounded-2xl ring-1 ring-ink/8 shadow-soft overflow-hidden">
         <div className="px-5 py-4 border-b border-ink/10 flex items-center gap-3 bg-stone/15">
           <label className="text-[11px] uppercase tracking-[0.2em] text-line shrink-0">Course</label>
           <select
             value={selectedCourseId}
             onChange={(e) => setSelectedCourseId(e.target.value)}
-            className="flex-1 px-3 py-2 rounded-md border border-ink/15 text-sm outline-none focus:border-teal bg-surface text-ink"
+            className="flex-1 px-3 py-2 rounded-xl ring-1 ring-ink/12 border-0 text-sm outline-none focus:ring-teal bg-surface text-ink"
           >
             {courses.map((c) => (
               <option key={c.id} value={c.id}>
@@ -80,7 +94,7 @@ export default function CourseFiles() {
             ))}
           </select>
           <span
-            className="w-2.5 h-2.5 rounded-sm shrink-0"
+            className="w-2.5 h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: course.color }}
             aria-hidden="true"
           />
@@ -157,7 +171,7 @@ function CollapseToggle({ collapsed, onToggle }) {
       aria-expanded={!collapsed}
       aria-label={collapsed ? 'Expand section' : 'Collapse section'}
       title={collapsed ? 'Expand' : 'Collapse'}
-      className="w-6 h-6 rounded-md flex items-center justify-center text-line hover:text-ink hover:bg-ink/10 transition"
+      className="w-6 h-6 rounded-full flex items-center justify-center text-line hover:text-ink hover:bg-ink/10 transition"
     >
       <svg
         viewBox="0 0 24 24"

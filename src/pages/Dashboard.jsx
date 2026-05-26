@@ -1,19 +1,39 @@
+import { useCallback } from 'react';
 import Header from '../components/Header.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import CourseGrid from '../components/CourseGrid.jsx';
 import CourseFiles from '../components/CourseFiles.jsx';
 import FileList from '../components/FileList.jsx';
+import CommandPalette from '../components/CommandPalette.jsx';
+import ShortcutsHelp from '../components/ShortcutsHelp.jsx';
+import WhatWeAccess from '../components/WhatWeAccess.jsx';
+import { useCourses } from '../context/CourseContext.jsx';
+import { useUI } from '../context/UIContext.jsx';
+import useGlobalKeyboard from '../hooks/useGlobalKeyboard.js';
 
 /*
  * Dashboard layout (responsive):
  *   - Mobile:  Header / Nav (horizontal scroll) / Main content stacked
  *   - Desktop: Header / Sidebar + Main side-by-side
  *
- * The `nav-*` ids on the section wrappers are anchor targets for the
- * Sidebar's smooth-scroll links. `scroll-mt-20` (80px) leaves clearance
- * for the 64px sticky Header when scrolling lands on a section top.
+ * Global keyboard shortcuts (⌘K / ? / N / R) and overlays (command palette,
+ * shortcuts help, transparency modal) are wired here so they only exist on
+ * the authenticated dashboard route — not on the landing page.
  */
 export default function Dashboard() {
+  const { refresh } = useCourses();
+  const { openCommandPalette, openShortcutsHelp, openAddCourse } = useUI();
+
+  const handleNewCourse = useCallback(() => openAddCourse(), [openAddCourse]);
+  const handleRefresh = useCallback(() => refresh(), [refresh]);
+
+  useGlobalKeyboard({
+    onCommandPalette: openCommandPalette,
+    onShortcutsHelp: openShortcutsHelp,
+    onNewCourse: handleNewCourse,
+    onRefresh: handleRefresh,
+  });
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -33,6 +53,10 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
+
+      <CommandPalette onNewCourse={handleNewCourse} onRefresh={handleRefresh} />
+      <ShortcutsHelp />
+      <WhatWeAccess />
     </div>
   );
 }

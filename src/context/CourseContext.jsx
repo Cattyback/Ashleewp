@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { useAuth } from './AuthContext.jsx';
+import { useToast } from './ToastContext.jsx';
 import {
   readCourses,
   writeCourses,
@@ -109,6 +110,7 @@ const SAVE_DEBOUNCE_MS = 1000;
 
 export function CourseProvider({ children }) {
   const { accessToken, expireSession } = useAuth();
+  const toast = useToast();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [syncError, setSyncError] = useState(null);
@@ -287,6 +289,16 @@ export function CourseProvider({ children }) {
     };
   }, [loadCourses]);
 
+  // Surface any background sync failure as a toast so the user isn't left guessing.
+  const lastSyncErrorRef = useRef(null);
+  useEffect(() => {
+    if (syncError && syncError !== lastSyncErrorRef.current) {
+      lastSyncErrorRef.current = syncError;
+      toast.error("Couldn't sync with Drive. Changes may not be saved.");
+    }
+    if (!syncError) lastSyncErrorRef.current = null;
+  }, [syncError, toast]);
+
   // Debounced save on every change (skipping the initial load).
   useEffect(() => {
     if (!accessToken) return;
@@ -323,6 +335,7 @@ export function CourseProvider({ children }) {
     };
     const nextCourses = [...coursesRef.current, course];
     setCourses(nextCourses);
+    toast.success(`Added "${course.name}"`);
 
     if (!accessToken) return;
 
@@ -356,6 +369,7 @@ export function CourseProvider({ children }) {
     const nextCourses = coursesRef.current.filter((c) => c.id !== id);
     setCourses(nextCourses);
     saveNow(nextCourses);
+    if (target) toast.success(`Deleted "${target.name}"`);
 
     // Drive folders are the source of truth for course existence. If we don't
     // trash the folder, the next load reconstructs the course from it. Trash
@@ -407,6 +421,16 @@ export function CourseProvider({ children }) {
     setCourses((prev) =>
       prev.map((c) => (c.id === courseId ? { ...c, files: newFiles } : c)),
     );
+
+    const added = addedIdsForShortcut.length || (current.length === 0 ? newFiles.length : 0);
+    const removedCount = removed.length;
+    if (added > 0 && removedCount > 0) {
+      toast.success(`Updated files in "${targetCourse.name}"`);
+    } else if (added > 0) {
+      toast.success(`Attached ${added} file${added > 1 ? 's' : ''} to "${targetCourse.name}"`);
+    } else if (removedCount > 0) {
+      toast.success(`Removed ${removedCount} file${removedCount > 1 ? 's' : ''} from "${targetCourse.name}"`);
+    }
 
     if (!accessToken) return;
 
@@ -501,6 +525,7 @@ export function CourseProvider({ children }) {
         c.id === courseId ? { ...c, files: c.files.filter((f) => f.id !== fileId) } : c,
       ),
     );
+    if (file && targetCourse) toast.success(`Unlinked "${file.name}"`);
 
     if (!accessToken || !file?.shortcutId) return;
     deleteShortcut(accessToken, file.shortcutId).catch((err) => {

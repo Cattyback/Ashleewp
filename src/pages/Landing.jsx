@@ -67,7 +67,7 @@ export default function Landing() {
         </div>
 
         {sessionExpired && (
-          <div className="rounded-lg border border-clay/40 bg-clay/10 px-4 py-3 text-sm text-ink text-left">
+          <div className="rounded-2xl ring-1 ring-clay/40 bg-clay/10 shadow-soft px-4 py-3 text-sm text-ink text-left">
             <p className="font-medium">Session expired</p>
             <p className="text-line mt-0.5">
               Your Google sign-in lasted about an hour. Sign in again to keep going.
@@ -77,7 +77,7 @@ export default function Landing() {
 
         <button
           onClick={() => signIn()}
-          className="w-full bg-ink text-paper font-medium py-3 px-6 rounded-lg shadow-sm hover:bg-steel active:scale-[0.99] transition flex items-center justify-center gap-3"
+          className="w-full bg-ink text-paper font-medium py-3 px-6 rounded-full shadow-soft hover:bg-steel active:scale-[0.99] transition flex items-center justify-center gap-3"
         >
           <GoogleIcon />
           Sign in with Google
@@ -95,7 +95,7 @@ export default function Landing() {
 // Geometric mark — two offset squares, the "puzzle" idea pared down.
 function BrandMark() {
   return (
-    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-surface border border-ink/10 shadow-sm mx-auto">
+    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-surface ring-1 ring-ink/8 shadow-soft mx-auto">
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
         <rect x="2" y="2" width="13" height="13" rx="2" fill="#355355" />
         <rect x="11" y="11" width="13" height="13" rx="2" fill="#a37561" />

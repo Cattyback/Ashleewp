@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import useDriveFiles from '../hooks/useDriveFiles.js';
 import { iconForMime } from '../utils/fileIcons.js';
+import { SkeletonRowList } from './Skeleton.jsx';
 
 export default function AttachFilesModal({ open, onClose, currentFiles, onSave }) {
   const { files: driveFiles, loading, error } = useDriveFiles();
@@ -66,7 +67,7 @@ export default function AttachFilesModal({ open, onClose, currentFiles, onSave }
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-surface text-ink rounded-xl border border-ink/10 shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        className="bg-surface text-ink rounded-3xl ring-1 ring-ink/8 shadow-float w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden"
       >
         <div className="p-5 border-b border-ink/10">
           <p className="text-[10px] uppercase tracking-[0.24em] text-line/70 mb-1">
@@ -81,14 +82,12 @@ export default function AttachFilesModal({ open, onClose, currentFiles, onSave }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name…"
-            className="mt-3 w-full px-3 py-2 rounded-md border border-ink/15 bg-paper/40 text-sm outline-none focus:border-teal focus:bg-surface placeholder:text-line/70"
+            className="mt-3 w-full px-4 py-2 rounded-full border border-ink/12 bg-paper/40 text-sm outline-none focus:border-teal focus:bg-surface placeholder:text-line/70"
           />
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {loading && (
-            <p className="p-5 text-sm text-line">Loading your Drive files…</p>
-          )}
+          {loading && <SkeletonRowList count={5} />}
           {error && (
             <p className="p-5 text-sm text-clay">
               Couldn't load Drive files: {error.message}
@@ -134,14 +133,14 @@ export default function AttachFilesModal({ open, onClose, currentFiles, onSave }
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-md text-line hover:text-ink hover:bg-ink/5 transition"
+              className="px-4 py-2 rounded-full text-line hover:text-ink hover:bg-ink/5 transition"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
-              className="px-4 py-2 rounded-md bg-ink text-paper font-medium hover:bg-steel transition"
+              className="px-4 py-2 rounded-full bg-ink text-paper font-medium hover:bg-steel shadow-soft transition"
             >
               Save
             </button>

@@ -54,7 +54,7 @@ export default function AddCourseModal({ open, onClose }) {
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
-        className="bg-surface text-ink rounded-xl border border-ink/10 shadow-xl w-full max-w-md p-6 space-y-5"
+        className="bg-surface text-ink rounded-3xl ring-1 ring-ink/8 shadow-float w-full max-w-md p-6 space-y-5"
       >
         <div>
           <p className="text-[10px] uppercase tracking-[0.24em] text-line/70 mb-1">
@@ -107,7 +107,7 @@ export default function AddCourseModal({ open, onClose }) {
                 type="button"
                 onClick={() => setColor(c.hex)}
                 aria-label={c.id}
-                className={`w-8 h-8 rounded-md transition ${
+                className={`w-8 h-8 rounded-full transition ${
                   color === c.hex
                     ? 'ring-2 ring-offset-2 ring-ink/80 ring-offset-surface'
                     : 'hover:scale-105'
@@ -122,13 +122,13 @@ export default function AddCourseModal({ open, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-md text-line hover:text-ink hover:bg-ink/5 transition"
+            className="px-4 py-2 rounded-full text-line hover:text-ink hover:bg-ink/5 transition"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-md bg-ink text-paper font-medium hover:bg-steel transition disabled:opacity-50"
+            className="px-4 py-2 rounded-full bg-ink text-paper font-medium hover:bg-steel transition shadow-soft disabled:opacity-50"
             disabled={!name.trim()}
           >
             Save course
@@ -139,16 +139,16 @@ export default function AddCourseModal({ open, onClose }) {
       <style>{`
         .wp-input {
           width: 100%;
-          padding: 0.5rem 0.75rem;
+          padding: 0.625rem 0.875rem;
           background: #ffffff;
           color: #2f2e2a;
-          border: 1px solid rgba(47,46,42,0.15);
-          border-radius: 0.375rem;
+          border: 1px solid rgba(47,46,42,0.12);
+          border-radius: 0.875rem;
           font-size: 0.875rem;
           outline: none;
-          transition: border-color 120ms;
+          transition: border-color 120ms, box-shadow 120ms;
         }
-        .wp-input:focus { border-color: #355355; }
+        .wp-input:focus { border-color: #355355; box-shadow: 0 0 0 3px rgba(53,83,85,0.12); }
         .wp-input::placeholder { color: rgba(84,97,106,0.7); }
       `}</style>
     </div>

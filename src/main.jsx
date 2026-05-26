@@ -5,6 +5,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { CourseProvider } from './context/CourseContext.jsx';
+import { ToastProvider } from './context/ToastContext.jsx';
+import { UIProvider } from './context/UIContext.jsx';
 import './index.css';
 
 // Google OAuth Client ID is read from .env at build time.
@@ -22,11 +24,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={clientId}>
       <AuthProvider>
-        <CourseProvider>
-          <BrowserRouter basename={import.meta.env.BASE_URL}>
-            <App />
-          </BrowserRouter>
-        </CourseProvider>
+        <ToastProvider>
+          <UIProvider>
+            <CourseProvider>
+              <BrowserRouter basename={import.meta.env.BASE_URL}>
+                <App />
+              </BrowserRouter>
+            </CourseProvider>
+          </UIProvider>
+        </ToastProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>,

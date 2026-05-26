@@ -46,10 +46,10 @@ export default function CourseCard({ course }) {
   }, [pickerOpen]);
 
   return (
-    <article className="group relative bg-surface text-ink rounded-xl border border-ink/10 hover:border-ink/25 transition min-h-[140px] overflow-visible">
+    <article className="group relative bg-surface text-ink rounded-2xl ring-1 ring-ink/8 hover:ring-ink/20 shadow-soft transition min-h-[140px] overflow-visible">
       {/* Color accent stripe on the left */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
         style={{ backgroundColor: course.color }}
         aria-hidden="true"
       />
@@ -95,12 +95,12 @@ export default function CourseCard({ course }) {
             aria-label="Change course color"
             aria-haspopup="true"
             aria-expanded={pickerOpen}
-            className={`w-6 h-6 rounded-md border border-ink/15 hover:border-ink/40 transition flex items-center justify-center ${
-              pickerOpen ? 'opacity-100 border-ink/40' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'
+            className={`w-6 h-6 rounded-full ring-1 ring-ink/15 hover:ring-ink/40 transition flex items-center justify-center ${
+              pickerOpen ? 'opacity-100 ring-ink/40' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'
             }`}
           >
             <span
-              className="w-3 h-3 rounded-sm"
+              className="w-3 h-3 rounded-full"
               style={{ backgroundColor: course.color }}
               aria-hidden="true"
             />
@@ -110,7 +110,7 @@ export default function CourseCard({ course }) {
             <div
               role="dialog"
               aria-label="Pick a color"
-              className="absolute top-full right-0 mt-1.5 z-20 bg-surface border border-ink/10 rounded-lg shadow-lg p-2 flex gap-1.5"
+              className="absolute top-full right-0 mt-1.5 z-20 bg-surface ring-1 ring-ink/8 rounded-2xl shadow-float p-2 flex gap-1.5"
             >
               {COLORS.map((c) => {
                 const selected = c.hex.toLowerCase() === (course.color || '').toLowerCase();
@@ -125,7 +125,7 @@ export default function CourseCard({ course }) {
                     title={c.id}
                     aria-label={c.id}
                     aria-pressed={selected}
-                    className={`w-6 h-6 rounded-md transition ${
+                    className={`w-6 h-6 rounded-full transition ${
                       selected
                         ? 'ring-2 ring-ink/80 ring-offset-2 ring-offset-surface'
                         : 'hover:scale-110'
@@ -142,7 +142,7 @@ export default function CourseCard({ course }) {
           type="button"
           onClick={handleDelete}
           title={confirming ? 'Click again to confirm' : 'Delete course'}
-          className={`w-6 h-6 rounded-md flex items-center justify-center text-xs transition ${
+          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition ${
             confirming
               ? 'bg-clay text-paper opacity-100'
               : 'bg-ink/5 text-line hover:bg-ink/10 hover:text-ink opacity-0 group-hover:opacity-100 focus:opacity-100'
