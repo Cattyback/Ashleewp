@@ -1,6 +1,7 @@
 # User Testing Evidence
 
 ## Test Session — First Contact with Ashlee Wang
+#photorecord:https://docs.google.com/document/d/1KfT_RS0DHbR6VvWimlVFkgWq7DtUimwN6IcFiW0lhwA/edit?usp=sharing 
 
 **Setting:** Video call. Ashlee opened the live URL (https://cattyback.github.io/Ashleewp/) on her laptop.
 
